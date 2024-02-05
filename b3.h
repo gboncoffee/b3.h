@@ -59,10 +59,6 @@
 
 #pragma scalar_storage_order little-endian
 
-/*
- * Most types founded in headers and etc.
- */
-
 typedef uint16_t B3TemplateID;
 #define B3T_SEQUENCE_RESET 1
 #define B3T_SEQUENCE 2
@@ -91,12 +87,6 @@ typedef uint16_t B3TemplateID;
 #define B3T_TRADE_BUST 57
 #define B3T_SNAPSHOT_FULL_REFRESH_HEADER 30
 #define B3T_SNAPSHOT_FULL_REFRESH_ORDERS_MBO 71
-
-typedef uint8_t B3ChannelID;
-typedef uint16_t B3BlockLength;
-typedef uint16_t B3SchemaID;
-typedef uint16_t B3SchemaVersion;
-typedef uint16_t B3Version;
 
 /*
  * Most types found in messages.
@@ -200,6 +190,15 @@ typedef uint8_t B3GovernanceIndicator;
 #define B3_GOVERNANCE_NM 4
 #define B3_GOVERNANCE_MA 5
 
+typedef uint8_t B3MDUpdateAction;
+#define B3_MDUPDATE_NEW 0
+#define B3_MDUPDATE_CHANGE 1
+#define B3_MDUPDATE_DELETE 2
+#define B3_MDUPDATE_DELETE_THRU 3
+#define B3_MDUPDATE_DELETE_FROM 4
+/* There's a note on the docs saying that overlay is not used. */
+#define B3_MDUPDATE_OVERLAY 5
+
 /* I don't know, at least by now, why folks on the exchange use this
  * single-value enum but the procotol requires so I'm implementing. What's
  * probably even more interesting is that a lot of stuff in the structs are
@@ -245,6 +244,13 @@ typedef uint8_t B3InstrAttribValue;
 #define B3_INSTR_ATTRIB_VALUE_FLAG_RFQ_FOR_CROSS 14
 #define B3_INSTR_ATTRIB_VALUE_NEGOTIATED_QUOTE 17
 
+typedef uint8_t B3OpenCloseSettlFlag;
+#define B3_OPENCLOSE_SETTL_DAILY 0
+#define B3_OPENCLOSE_SETTL_SESSION 1
+#define B3_OPENCLOSE_SETTL_EXPECTED_ENTRY 3
+#define B3_OPENCLOSE_SETTL_ENTRY_FROM_PREV_DAY 4
+#define B3_OPENCLOSE_SETTL_THEORETICAL_PRICE 5
+
 typedef uint8_t B3CFICode[6];
 typedef uint8_t B3Asset[6];
 typedef uint8_t B3CountryCode[2];
@@ -260,12 +266,8 @@ typedef uint8_t B3ChannelNumber;
 typedef uint8_t B3Day;
 typedef uint8_t B3MarketSegmentID;
 typedef uint8_t B3Month;
-typedef uint8_t B3NumInGroup;
-typedef uint8_t B3Reserved;
 typedef uint8_t B3Week;
 
-typedef uint16_t B3blockLength;
-typedef uint16_t B3EncodingType;
 typedef uint16_t B3Utf8StringLength;
 typedef uint16_t B3LocalMktDate;
 typedef uint16_t B3MessageLength;
@@ -281,7 +283,6 @@ typedef uint32_t B3MDEntryPositionNo;
 typedef uint32_t B3NumberOfTrades;
 typedef uint32_t B3RptSeq;
 typedef uint32_t B3SeqNum;
-typedef uint32_t B3SequenceNumber;
 typedef uint32_t B3TradeID;
 
 typedef int64_t B3Quantity;
@@ -294,10 +295,16 @@ typedef uint64_t B3ClearingHouseID;
 typedef uint64_t B3NewsID;
 typedef uint64_t B3OrderID;
 typedef uint64_t B3SecurityID;
-typedef uint64_t B3SendingTime;
 typedef uint64_t B3Time;
 typedef uint64_t B3UTCTimestampSeconds;
 typedef uint64_t B3UTCTimestampNanos;
+typedef uint64_t B3Percentage;
+typedef uint64_t B3Percentage9;
+
+typedef struct {
+	uint8_t counter;
+	uint16_t block_length;
+}__attribute__((packed)) B3NumInGroup;
 
 typedef struct {
 	uint16_t year;
@@ -317,20 +324,21 @@ typedef struct {
  */
 
 typedef struct {
-	B3ChannelID channel_id;
-	B3Reserved reserved;
-	B3SequenceVersion sequence_version;
-	B3SequenceNumber sequence_number;
-	B3SendingTime sending_time;
+	uint8_t channel_id;
+	uint8_t reserved;
+	uint16_t sequence_version;
+	uint32_t sequence_number;
+	uint64_t sending_time;
 } __attribute__((packed)) B3PacketHeader;
 
 typedef struct {
-	B3MessageLength length;
-	B3EncodingType encoding;
-	B3BlockLength block_length;
+	uint16_t length;
+	/* Encoding shall be always 0x50eb for use in B3. */
+	uint16_t encoding;
+	uint16_t block_length;
 	B3TemplateID template_id;
-	B3SchemaID schema_id;
-	B3SchemaVersion schema_version;
+	uint16_t schema_id;
+	uint16_t schema_version;
 } __attribute__((packed)) B3MessageHeader;
 
 /*
@@ -339,7 +347,7 @@ typedef struct {
 
 typedef struct {
 	B3SeqNum next_sequence_number;
-}__attribute__((packed)) B3Sequence;
+}__attribute__((packed)) B3MessageSequence;
 
 typedef struct {
 	B3SecurityID security_id;
@@ -348,11 +356,11 @@ typedef struct {
 	B3SecurityTradingStatus security_trading_status;
 	B3SecurityTradingEvent security_trading_event;
 	B3LocalMktDate trade_date;
-	uint16_t __padding;
+	uint16_t __padding__;
 	B3UTCTimestampNanos trade_session_open_time;
 	B3UTCTimestampNanos transaction_time;
 	B3RptSeq rpt_seq;
-}__attribute__((packed)) B3SecurityStatus;
+}__attribute__((packed)) B3MessageSecurityStatus;
 
 /* It's important to note that this does not contain the news itself, as it's
  * impossible to represent it as a struct in ISO C90. */
@@ -366,36 +374,36 @@ typedef struct {
 	B3NewsID news_id;
 	B3UTCTimestampNanos orig_time;
 	uint32_t total_text_length;
-}__attribute__((packed)) B3News;
+}__attribute__((packed)) B3MessageNews;
 
 typedef struct {
 	B3SecurityID security_id;
 	B3MatchEventIndicator match_event_indicator;
-	uint16_t __padding;
-	uint8_t __padding2;
+	uint16_t __padding__;
+	uint8_t __padding2__;
 	B3UTCTimestampNanos md_entry_timestamp;
-}__attribute__((packed)) B3EmptyBook;
+}__attribute__((packed)) B3MessageEmptyBook;
 
 typedef struct {
 	B3SecurityGroup security_group;
-	uint32_t __padding;
-	uint8_t __padding2;
+	uint32_t __padding__;
+	uint8_t __padding2__;
 	B3MatchEventIndicator match_event_indicator;
 	B3TradingSessionID trading_session_id;
 	B3TradingSessionSubID trading_session_subid;
 	B3SecurityTradingEvent security_trading_event;
 	B3LocalMktDate trade_date;
-	uint16_t __padding3;
+	uint16_t __padding3__;
 	B3UTCTimestampNanos trade_session_open_time;
 	B3UTCTimestampNanos transaction_time;
-}__attribute__((packed)) B3SecurityGroupPhase;
+}__attribute__((packed)) B3MessageSecurityGroupPhase;
 
 typedef struct {
 	B3MatchEventIndicator match_event_indicator;
-	uint16_t __padding;
-	uint8_t __padding2;
+	uint16_t __padding__;
+	uint8_t __padding2__;
 	B3UTCTimestampNanos md_entry_timestamp;
-}__attribute__((packed)) B3ChannelReset;
+}__attribute__((packed)) B3MessageChannelReset;
 
 typedef struct {
 	B3SecurityID security_id;
@@ -463,7 +471,259 @@ typedef struct {
 		B3InstrAttribType instr_attrib_type;
 		B3InstrAttribValue instr_attrib_value;
 	}__attribute((packed)) no_instr_attrib;
-}__attribute__((packed)) B3SecurityDefinition;
+}__attribute__((packed)) B3MessageSecurityDefinition;
+
+typedef struct {
+	B3SecurityID security_id;
+	B3MatchEventIndicator match_event_indicator;
+	B3MDUpdateAction md_update_action;
+	B3OpenCloseSettlFlag openclose_settl_flag;
+	uint8_t __padding__;
+	B3Price md_entry_px;
+	B3PriceOffset8 net_chg_prev_day;
+	B3LocalMktDate trade_date;
+	B3UTCTimestampNanos md_entry_timestamp;
+	B3RptSeq rpt_seq;
+}__attribute__((packed)) B3MessageOpeningPrice;
+
+typedef struct {
+	B3SecurityID security_id;
+	B3MatchEventIndicator match_event_indicator;
+	B3MDUpdateAction md_update_action;
+	B3LocalMktDate trade_date;
+	B3Price md_entry_px;
+	B3Quantity md_entry_size;
+	B3UTCTimestampNanos md_entry_timestamp;
+	B3RptSeq rpt_seq;
+}__attribute__((packed)) B3MessageTheoreticalOpeningPrice;
+
+typedef struct {
+	B3SecurityID security_id;
+	B3MatchEventIndicator match_event_indicator;
+	B3OpenCloseSettlFlag open_close_settl;
+	uint16_t __padding__;
+	B3Price8 md_entry_px;
+	B3LocalMktDate last_trade_date;
+	B3LocalMktDate trade_date;
+	B3UTCTimestampNanos md_entry_timestamp;
+	B3RptSeq rpt_seq;
+}__attribute__((packed)) B3MessageClosingPrice;
+
+typedef struct {
+	B3SecurityID security_id;
+	B3MatchEventIndicator match_event_indicator;
+	B3MDUpdateAction md_update_action;
+	B3ImbalanceCondition imbalance_condition;
+	B3Quantity md_entry_size;
+	B3UTCTimestampNanos md_entry_timestamp;
+	B3RptSeq rpt_seq;
+}__attribute__((packed)) B3MessageAuctionImbalance;
+
+typedef struct {
+	B3SecurityID security_id;
+	B3MatchEventIndicator match_event_indicator;
+	B3PriceBandType price_band_type;
+	B3PriceLimitType price_limit_type;
+	B3PriceBandMPType price_band_mp_type;
+	B3Price low_limit_price;
+	B3Price high_limit_price;
+	B3Fixed8 trading_reference_price;
+	B3UTCTimestampNanos md_entry_timestamp;
+	B3RptSeq rpt_seq;
+}__attribute__((packed)) B3MessagePriceBand;
+
+typedef struct {
+	B3SecurityID security_id;
+	B3MatchEventIndicator match_event_indicator;
+	uint16_t __padding__;
+	uint8_t __padding2__;
+	B3QuantityVolume avg_daily_traded_qty;
+	B3QuantityVolume max_traded_volume;
+	B3UTCTimestampNanos md_entry_timestamp;
+	B3RptSeq rpt_seq;
+}__attribute__((packed)) B3MessageQuantityBand;
+
+typedef struct {
+	B3SecurityID security_id;
+	B3MatchEventIndicator match_event_indicator;
+	B3MDUpdateAction md_update_action;
+	B3LocalMktDate trade_date;
+	B3Price md_entry_px;
+	B3UTCTimestampNanos md_entry_timestamp;
+	B3RptSeq rpt_seq;
+}__attribute__((packed)) B3MessageHighPrice;
+
+typedef struct {
+	B3SecurityID security_id;
+	B3MatchEventIndicator match_event_indicator;
+	B3MDUpdateAction md_update_action;
+	B3LocalMktDate trade_date;
+	B3Price md_entry_px;
+	B3UTCTimestampNanos md_entry_timestamp;
+	B3RptSeq rpt_seq;
+}__attribute__((packed)) B3MessageLowPrice;
+
+typedef struct {
+	B3SecurityID security_id;
+	B3MatchEventIndicator match_event_indicator;
+	B3TradingSessionID trading_session_id;
+	B3TradeCondition trade_condition;
+	B3Price md_entry_px;
+	B3Quantity md_entry_size;
+	B3TradeID trade_id;
+	B3Firm md_entry_buyer;
+	B3Firm md_entry_seller;
+	B3LocalMktDate trade_date;
+	B3UTCTimestampNanos md_entry_timestamp;
+	B3RptSeq rpt_seq;
+	uint16_t seller_days;
+	B3Percentage md_entry_interest_rate;
+	B3TrdSubType trd_sub_type;
+	uint16_t __padding__;
+	uint8_t __padding2__;
+}__attribute__((packed)) B3MessageLastTradePrice;
+
+typedef struct {
+	B3SecurityID security_id;
+	B3MatchEventIndicator match_event_indicator;
+	B3MDUpdateAction md_update_action;
+	B3MDEntryType md_entry_type;
+	uint8_t __padding__;
+	B3Price md_entry_px;
+	B3Quantity md_entry_size;
+	B3MDEntryPositionNo md_entry_position_no;
+	B3Firm entering_firm;
+	B3UTCTimestampNanos md_insert_timestamp;
+	B3OrderID secondary_order_id;
+	B3RptSeq rpt_seq;
+	B3UTCTimestampNanos md_entry_timestamp;
+}__attribute__((packed)) B3MessageOrderMBO;
+
+typedef struct {
+	B3SecurityID security_id;
+	B3MatchEventIndicator match_event_indicator;
+	uint8_t __padding__;
+	B3MDEntryType md_entry_type;
+	uint8_t __padding2__;
+	B3MDEntryPositionNo md_entry_position_no;
+	B3Quantity md_entry_size;
+	B3OrderID secondary_order_id;
+	B3UTCTimestampNanos md_entry_timestamp;
+	B3RptSeq rpt_seq;
+}__attribute__((packed)) B3MessageDeleteOrderMBO;
+
+typedef struct {
+	B3SecurityID security_id;
+	B3MatchEventIndicator match_event_indicator;
+	B3MDUpdateAction md_update_action;
+	B3MDEntryType md_entry_type;
+	uint8_t __padding__;
+	B3MDEntryPositionNo md_entry_position_no;
+	B3UTCTimestampNanos md_entry_timestamp;
+	B3RptSeq rpt_seq;
+}__attribute__((packed)) B3MessageMassDeleteOrdersMBO;
+
+typedef struct {
+	B3SecurityID security_id;
+	B3MatchEventIndicator match_event_indicator;
+	B3TradingSessionID trading_session_id;
+	B3TradeCondition trade_condition;
+	B3Price md_entry_px;
+	B3Quantity md_entry_size;
+	B3TradeID trade_id;
+	B3Firm md_entry_buyer;
+	B3Firm md_entry_seller;
+	B3LocalMktDate trade_date;
+	B3TrdSubType trd_sub_type;
+	uint8_t __padding__;
+	B3UTCTimestampNanos md_entry_timestamp;
+	B3RptSeq rpt_seq;
+}__attribute__((packed)) B3MessageTrade;
+
+typedef struct {
+	B3SecurityID security_id;
+	B3MatchEventIndicator match_event_indicator;
+	B3TradingSessionID trading_session_id;
+	B3TradeCondition trade_condition;
+	B3Price md_entry_px;
+	B3Quantity md_entry_size;
+	B3TradeID trade_id;
+	B3Firm md_entry_buyer;
+	B3Firm md_entry_seller;
+	B3LocalMktDate trade_date;
+	B3UTCTimestampNanos md_entry_timestamp;
+	B3RptSeq rpt_seq;
+	uint16_t seller_days;
+	B3Percentage md_entry_interest_rate;
+	B3TrdSubType trd_sub_type;
+	uint16_t __padding__;
+	uint8_t __padding2__;
+}__attribute__((packed)) B3MessageForwardTrade;
+
+typedef struct {
+	B3SecurityID security_id;
+	uint16_t __padding__;
+	B3AggressorSide aggressor_side;
+	uint8_t __padding2__;
+	B3Price last_px;
+	B3Quantity fill_qty;
+	B3Quantity tradded_hidden_qty;
+	B3Quantity cxl_qty;
+	B3UTCTimestampNanos aggressor_time;
+	B3RptSeq rpt_seq;
+	B3UTCTimestampNanos md_entry_timestamp;
+}__attribute__((packed)) B3MessageExecutionSummary;
+
+typedef struct {
+	B3SecurityID security_id;
+	B3MatchEventIndicator match_event_indicator;
+	B3TradingSessionID trading_session_id;
+	B3LocalMktDate trade_date;
+	B3QuantityVolume trade_volume;
+	B3Price vwap_px;
+	B3PriceOffset8 net_chg_prev_day;
+	B3NumberOfTrades number_of_trades;
+	B3UTCTimestampNanos md_entry_timestamp;
+	B3RptSeq rpt_seq;
+}__attribute__((packed)) B3MessageExecutionStatistics;
+
+typedef struct {
+	B3SecurityID security_id;
+	B3MatchEventIndicator match_event_indicator;
+	B3TradingSessionID trading_session_id;
+	uint16_t __padding__;
+	B3Price md_entry_px;
+	B3Quantity md_entry_size;
+	B3TradeID trade_id;
+	B3LocalMktDate trade_date;
+	uint16_t __padding2__;
+	B3UTCTimestampNanos md_entry_timestamp;
+	B3RptSeq rpt_seq;
+}__attribute__((packed)) B3MessageTradeBust;
+
+typedef struct {
+	B3SecurityID security_id;
+	B3SeqNum last_msg_seq_num_processed;
+	uint32_t tot_num_reports;
+	uint32_t tot_num_bids;
+	uint32_t tot_num_offers;
+	unit16_t tot_num_stats;
+	uint16_t __padding__;
+	B3RptSeq last_rpt_seq;
+}__attribute__((packed)) B3MessageSnapshotFullRefreshHeader;
+
+typedef struct {
+	B3SecurityID security_id;
+	struct {
+		B3Price md_entry_px;
+		B3Quantity md_entry_size;
+		B3MDEntryPositionNo md_entry_position_no;
+		B3Firm entering_firm;
+		B3UTCTimestampNanos md_insert_timestamp;
+		B3OrderID secondary_order_id;
+		B3MDEntryType md_entry_type;
+	}__attribute__((packed)) no_md_entries;
+}__attribute__((packed)) B3SnapshotFullRefreshOrdersMBO;
 
 #ifdef B3_IMPLEMENTATION
 #undef B3_IMPLEMENTATION
