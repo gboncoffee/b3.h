@@ -803,37 +803,6 @@ typedef struct {
 	}__attribute__((packed)) no_md_entries;
 }__attribute__((packed)) B3SnapshotFullRefreshOrdersMBO;
 
-#ifdef B3_IMPLEMENTATION
-#undef B3_IMPLEMENTATION
-
-/* Returns -1 if the packet is not complete. */
-int8_t b3_packet_number_of_msg(uint8_t *buf, size_t size)
-{
-	B3MessageHeader *header;
-	int8_t n_msg = 0;
-	uint8_t *end = buf + size - 1;
-
-	if (size < sizeof(B3PacketHeader))
-		return -1;
-
-	header = (B3MessageHeader*) (buf + sizeof(B3PacketHeader));
-
-	for (;;) {
-		if ((uint8_t*) header == end + 1)
-			return n_msg;
-		if (((uint8_t*) header) + sizeof(B3MessageHeader) > end)
-			return -1;
-		header = (B3MessageHeader*) (((size_t) header) + header->length);
-		if (((uint8_t*) header) > end + 1)
-			return -1;
-		n_msg++;
-	}
-}
-
-#endif /* B3_IMPLEMENTATION */
-
-#define b3_packet_is_complete(buf, size) (b3_packet_number_of_msg((buf), (size)) > 0)
-
 #endif /* B3_HEADER_INCLUDED */
 
 #pragma scalar_storage_order default
