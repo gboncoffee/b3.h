@@ -89,7 +89,35 @@ typedef uint16_t B3TemplateID;
 #define B3T_SNAPSHOT_FULL_REFRESH_ORDERS_MBO 71
 
 /*
- * Most types found in messages.
+ * By the way you're literally supposed to make something like this:
+ *
+ * uint8_t *buf = receive_packet_from_somewhere();
+ * B3PacketHeader *p_header = (B3PacketHeader*) buf;
+ * B3MessageHeader *m_header = (B3MessageHeader*) &buf[16];
+ *
+ * And so forth for the rest of the messages...
+ */
+
+typedef struct {
+	uint8_t channel_id;
+	uint8_t reserved;
+	uint16_t sequence_version;
+	uint32_t sequence_number;
+	uint64_t sending_time;
+} __attribute__((packed)) B3PacketHeader;
+
+typedef struct {
+	uint16_t length;
+	/* Encoding shall be always 0x50eb for use in B3. */
+	uint16_t encoding;
+	uint16_t block_length;
+	B3TemplateID template_id;
+	uint16_t schema_id;
+	uint16_t schema_version;
+} __attribute__((packed)) B3MessageHeader;
+
+/*
+ * Sets.
  */
 
 typedef uint8_t B3MatchEventIndicator;
@@ -101,6 +129,56 @@ typedef uint8_t B3MatchEventIndicator;
 #define B3_MATCH_EVENT_RECOVERY_MSG (1 << 5)
 /* Bit 7 is reserved for future use. */
 #define B3_MATCH_EVENT_END_OF_EVENT (1 << 7)
+
+/* I don't know why this is a 16 bit number but it's what it it's. */
+typedef uint16_t B3ImbalanceCondition;
+#define B3_IMBALANCE_CONDITION_MORE_BUYERS (1 << 8)
+#define B3_IMBALANCE_CONDITION_MORE_SELLERS (1 << 9)
+
+typedef uint16_t B3TradeCondition;
+#define B3_TRADE_CONDITION_OPENING_PRICE (1 << 0)
+#define B3_TRADE_CONDITION_CROSSED (1 << 1)
+#define B3_TRADE_CONDITION_LAST_TRADE_AT_SAME_PRICE (1 << 2)
+#define B3_TRADE_CONDITION_OUT_OF_SEQUENCE (1 << 3)
+#define B3_TRADE_CONDITION_TRADE_ON_BEHALF (1 << 6)
+#define B3_TRADE_CONDITION_REGULAR_TRADE (1 << 13)
+#define B3_TRADE_CONDITION_BLOCK_TRADE (1 << 14)
+
+/*
+ * Enums.
+ */
+
+typedef uint8_t B3SecurityIDSource;
+#define B3_SECURITY_ID_SOURCE_ISIN ((uint8_t) '4')
+#define B3_SECURITY_ID_SOURCE_EXCHANGE_SYMBOL ((uint8_t) '8')
+
+typedef uint8_t B3SecurityUpdateAction;
+#define B3_SECURITY_UPDATE_ADD ((uint8_t) 'A')
+#define B3_SECURITY_UPDATE_DELETE ((uint8_t) 'D')
+#define B3_SECURITY_UPDATE_MODIFY ((uint8_t) 'M')
+
+typedef uint8_t B3MDEntryType;
+#define B3_MD_ENTRY_BID ((uint8_t) '0')
+#define B3_MD_ENTRY_OFFER ((uint8_t) '1')
+#define B3_MD_ENTRY_TRADE ((uint8_t) '2')
+#define B3_MD_ENTRY_INDEX_VALUE ((uint8_t) '3')
+#define B3_MD_ENTRY_OPENING_PRICE ((uint8_t) '4')
+#define B3_MD_ENTRY_CLOSING_PRICE ((uint8_t) '5')
+#define B3_MD_ENTRY_SETTLEMENT_PRICE ((uint8_t) '6')
+#define B3_MD_ENTRY_SESSION_HIGH_PRICE ((uint8_t) '7')
+#define B3_MD_ENTRY_SESSION_LOW_PRICE ((uint8_t) '8')
+#define B3_MD_ENTRY_EXECUTION_STATISTICS ((uint8_t) '9')
+#define B3_MD_ENTRY_IMBALANCE ((uint8_t) 'A')
+#define B3_MD_ENTRY_TRADE_VOLUME ((uint8_t) 'B')
+#define B3_MD_ENTRY_OPEN_INTEREST ((uint8_t) 'C')
+#define B3_MD_ENTRY_EMPTY_BOOK ((uint8_t) 'J')
+#define B3_MD_ENTRY_SECURITY_TRADING_STATE_PHASE ((uint8_t) 'c')
+#define B3_MD_ENTRY_PRICE_BAND ((uint8_t) 'g')
+#define B3_MD_ENTRY_QUANTITY_BAND ((uint8_t) 'h')
+#define B3_MD_ENTRY_COMPOSITE_UNDERLYING_PRICE ((uint8_t) 'D')
+#define B3_MD_ENTRY_EXECUTION_SUMMARY ((uint8_t) 's')
+#define B3_MD_ENTRY_VOLATILITY_PRICE ((uint8_t) 'v')
+#define B3_MD_ENTRY_TRADE_BUST ((uint8_t) 'u')
 
 typedef uint8_t B3TradingSessionID;
 #define B3_TRADING_SESSION_ID_REGULAR 1
@@ -145,15 +223,6 @@ typedef uint8_t B3TradingSessionSubID;
 #define UNKNOWN 20
 #define RESERVED 21
 #define CLOSING_CALL 101
-
-typedef uint8_t B3SecurityIDSource;
-#define B3_SECURITY_ID_SOURCE_ISIN ((uint8_t) '4')
-#define B3_SECURITY_ID_SOURCE_EXCHANGE_SYMBOL ((uint8_t) '8')
-
-typedef uint8_t B3SecurityUpdateAction;
-#define B3_SECURITY_UPDATE_ADD ((uint8_t) 'A')
-#define B3_SECURITY_UPDATE_DELETE ((uint8_t) 'D')
-#define B3_SECURITY_UPDATE_MODIFY ((uint8_t) 'M')
 
 typedef uint8_t B3LotType;
 #define B3_LOT_TYPE_ODD 1
@@ -251,6 +320,41 @@ typedef uint8_t B3OpenCloseSettlFlag;
 #define B3_OPENCLOSE_SETTL_ENTRY_FROM_PREV_DAY 4
 #define B3_OPENCLOSE_SETTL_THEORETICAL_PRICE 5
 
+typedef uint8_t B3PriceBandType;
+#define B3_PRICE_BAND_HARD_LIMIT 1
+#define B3_PRICE_BAND_AUCTION_LIMITS 2
+#define B3_PRICE_BAND_REJECTION_BAND 3
+#define B3_PRICE_BAND_STATIC_LIMITS 4
+
+typedef uint8_t B3PriceLimitType;
+#define B3_PRICE_LIMIT_UNIT 0
+#define B3_PRICE_LIMIT_TICKS 1
+#define B3_PRICE_LIMIT_PERCENTAGE 2
+
+typedef uint8_t B3PriceBandMPType;
+#define B3_PRICE_BAND_MP_LAST_TRADED 0
+#define B3_PRICE_BAND_MP_COMPLEMENTARY_LAST 1
+#define B3_PRICE_BAND_MP_THEORETICAL_PRICE 2
+
+typedef uint8_t B3TrdSubType;
+#define B3_TRD_SUBTYPE_MULTI_ASSET 101
+#define B3_TRD_SUBTYPE_LEG 102
+#define B3_TRD_SUBTYPE_MIDPOINT 103
+#define B3_TRD_SUBTYPE_BLOCK_BOOK 104
+#define B3_TRD_SUBTYPE_RF 105
+#define B3_TRD_SUBTYPE_RLP 106
+#define B3_TRD_SUBTYPE_TAC 107
+#define B3_TRD_SUBTYPE_TAA 108
+
+typedef uint8_t B3AggressorSide;
+#define B3_NO_AGGRESSOR 0
+#define B3_AGGRESSOR_SIDE_BUY 1
+#define B3_AGGRESSOR_SIDE_SELL 2
+
+/*
+ * Primitives.
+ */
+
 typedef uint8_t B3CFICode[6];
 typedef uint8_t B3Asset[6];
 typedef uint8_t B3CountryCode[2];
@@ -278,7 +382,7 @@ typedef uint16_t B3Year;
 
 typedef int32_t B3LocalMktDate32;
 
-typedef uint32_t B3FirmOptional;
+typedef uint32_t B3Firm;
 typedef uint32_t B3MDEntryPositionNo;
 typedef uint32_t B3NumberOfTrades;
 typedef uint32_t B3RptSeq;
@@ -290,6 +394,8 @@ typedef int64_t B3QuantityVolume;
 typedef int64_t B3Fixed8;
 typedef int64_t B3Price;
 typedef int64_t B3RatioQty;
+typedef int64_t B3Price8;
+typedef int64_t B3PriceOffset8;
 
 typedef uint64_t B3ClearingHouseID;
 typedef uint64_t B3NewsID;
@@ -312,34 +418,6 @@ typedef struct {
 	uint8_t day;
 	uint8_t week;
 }__attribute__((packed)) B3MaturityMonthYear;
-
-/*
- * By the way you're literally supposed to make something like this:
- *
- * uint8_t *buf = receive_packet_from_somewhere();
- * B3PacketHeader *p_header = (B3PacketHeader*) buf;
- * B3MessageHeader *m_header = (B3MessageHeader*) &buf[16];
- *
- * And so forth for the rest of the messages...
- */
-
-typedef struct {
-	uint8_t channel_id;
-	uint8_t reserved;
-	uint16_t sequence_version;
-	uint32_t sequence_number;
-	uint64_t sending_time;
-} __attribute__((packed)) B3PacketHeader;
-
-typedef struct {
-	uint16_t length;
-	/* Encoding shall be always 0x50eb for use in B3. */
-	uint16_t encoding;
-	uint16_t block_length;
-	B3TemplateID template_id;
-	uint16_t schema_id;
-	uint16_t schema_version;
-} __attribute__((packed)) B3MessageHeader;
 
 /*
  * Messages.
@@ -707,7 +785,7 @@ typedef struct {
 	uint32_t tot_num_reports;
 	uint32_t tot_num_bids;
 	uint32_t tot_num_offers;
-	unit16_t tot_num_stats;
+	uint16_t tot_num_stats;
 	uint16_t __padding__;
 	B3RptSeq last_rpt_seq;
 }__attribute__((packed)) B3MessageSnapshotFullRefreshHeader;
@@ -728,7 +806,33 @@ typedef struct {
 #ifdef B3_IMPLEMENTATION
 #undef B3_IMPLEMENTATION
 
+/* Returns -1 if the packet is not complete. */
+int8_t b3_packet_number_of_msg(uint8_t *buf, size_t size)
+{
+	B3MessageHeader *header;
+	int8_t n_msg = 0;
+	uint8_t *end = buf + size - 1;
+
+	if (size < sizeof(B3PacketHeader))
+		return -1;
+
+	header = (B3MessageHeader*) (buf + sizeof(B3PacketHeader));
+
+	for (;;) {
+		if ((uint8_t*) header == end + 1)
+			return n_msg;
+		if (((uint8_t*) header) + sizeof(B3MessageHeader) > end)
+			return -1;
+		header = (B3MessageHeader*) (((size_t) header) + header->length);
+		if (((uint8_t*) header) > end + 1)
+			return -1;
+		n_msg++;
+	}
+}
+
 #endif /* B3_IMPLEMENTATION */
+
+#define b3_packet_is_complete(buf, size) (b3_packet_number_of_msg((buf), (size)) > 0)
 
 #endif /* B3_HEADER_INCLUDED */
 
