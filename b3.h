@@ -803,6 +803,1069 @@ typedef struct {
 	}__attribute__((packed)) no_md_entries;
 }__attribute__((packed)) B3SnapshotFullRefreshOrdersMBO;
 
+/*
+ * Private messages.
+ */
+
+#define B3TP_NEGOTIATE 1
+#define B3TP_NEGOTIATE_RESPONSE 2
+#define B3TP_NEGOTIATE_REJECT 3
+#define B3TP_ESTABILISH 4
+#define B3TP_ESTABILISH_ACK 5
+#define B3TP_ESTABILISH_REJECT 6
+#define B3TP_TERMINATE 7
+#define B3TP_NOT_APPLIED 8
+#define B3TP_SEQUENCE 9
+#define B3TP_RETRANSMIT_REQUEST 12
+#define B3TP_RETRANSMISSION 13
+#define B3TP_RETRANSMIT_REJECT 14
+#define B3TP_SIMPLE_NEW_ORDER 100
+#define B3TP_SIMPLE_MODIFY_ORDER 101
+#define B3TP_NEW_ORDER_SINGLE 102
+#define B3TP_ORDER_CANCEL_REPLACE_REQUEST 104
+#define B3TP_ORDER_CANCEL_REQUEST 105
+#define B3TP_NEW_ORDER_CROSS 106
+#define B3TP_EXECUTION_REPORT_NEW 200
+#define B3TP_EXECUTION_REPORT_MODIFY 201
+#define B3TP_EXECUTION_REPORT_CANCEL 2O2
+#define B3TP_EXECUTION_REPORT_TRADE 203
+#define B3TP_EXECUTION_REPORT_REJECT 2O4
+#define B3TP_EXECUTION_REPORT_FORWARD 205
+#define B3TP_BUSINESS_MESSAGE_REJECT 206
+#define B3TP_SECURITY_DEFINITION_REQUEST 300
+#define B3TP_SECURITY_DEFINITION_RESPONSE 301
+#define B3TP_QUOTE_REQUEST 401
+#define B3TP_QUOTE_STATUS_REPORT 402
+#define B3TP_QUOTE 403
+#define B3TP_QUOTE_CANCEL 404
+#define B3TP_QUOTE_REQUEST_REJECT 405
+#define B3TP_POSITION_MAINTENANCE_CANCEL_REQUEST 501
+#define B3TP_POSITION_MAINTENANCE_REQUEST 502
+#define B3TP_POSITION_MAINTENANCE_REPORT 503
+#define B3TP_ALLOCATION_INSTRUCTION 601
+#define B3TP_ALLOCATION_REPORT 602
+#define B3TP_ORDER_MASS_ACTION_REQUEST 701
+
+typedef uint8_t B3NegotiationRejectCode;
+#define B3_NEGOTIATION_REJECT_UNSPECIFIED 0
+#define B3_NEGOTIATION_REJECT_CREDENTIALS 1
+#define B3_NEGOTIATION_REJECT_FLOWTYPE_NOT_SUPPORTED 2
+#define B3_NEGOTIATION_REJECT_ALREADY_NEGOTIATED 3
+#define B3_NEGOTIATION_REJECT_SESSION_BLOCKED 4
+#define B3_NEGOTIATION_REJECT_INVALID_SESSIONID 5
+#define B3_NEGOTIATION_REJECT_INVALID_SESSIONVERID 6
+#define B3_NEGOTIATION_REJECT_INVALID_TIMESTAMP 7
+#define B3_NEGOTIATION_REJECT_INVALID_FIRM 8
+#define B3_NEGOTIATION_REJECT_NEGOTIATE_NOT_ALLOWED 20
+#define B3_NEGOTIATION_REJECT_DUPLICATE_SESSION_CONNECTION 21
+#define B3_NEGOTIATION_REJECT_AUTHENTICATION_IN_PROGRESS 22
+#define B3_NEGOTIATION_REJECT_PROTOCOL_VERSION_NOT_SUPPORTED 23
+
+typedef uint8_t B3CancelOnDisconnectType;
+#define B3_CANCEL_ON_DISCONNECT_DO_NOT_OR_TERMINATE 0
+#define B3_CANCEL_ON_DISCONNECT_ONLY 1
+#define B3_CANCEL_ON_TERMINATE_ONLY 2
+#define B3_CANCEL_ON_DISCONNECT_OR_TERMINATE 3
+
+typedef uint8_t B3EstabilishRejectCode;
+#define B3_ESTABILISH_REJECT_UNSPECIFIED 0
+#define B3_ESTABILISH_REJECT_CREDENTIALS 1
+#define B3_ESTABILISH_REJECT_UNNEGOTIATED 2
+#define B3_ESTABILISH_REJECT_ALREADY_ESTABLISHED 3
+#define B3_ESTABILISH_REJECT_SESSION_BLOCKED 4
+#define B3_ESTABILISH_REJECT_INVALID_SESSIONID 5
+#define B3_ESTABILISH_REJECT_INVALID_SESSIONVERID 6
+#define B3_ESTABILISH_REJECT_INVALID_TIMESTAMP 7
+#define B3_ESTABILISH_REJECT_INVALID_KEEPALIVE_INTERVAL 8
+#define B3_ESTABILISH_REJECT_INVALID_NEXTSEQNO 9
+#define B3_ESTABILISH_REJECT_ATTEMPTS_EXCEEDED 10
+#define B3_ESTABILISH_REJECT_NOT_ALLOWED 20
+#define B3_ESTABILISH_REJECT_DUPLICATE_SESSION_CONNECTION 21
+#define B3_ESTABILISH_REJECT_AUTHENTICATION_IN_PROGRESS 22
+#define B3_ESTABILISH_REJECT_PROTOCOL_VERSION_NOT_SUPPORTED 23
+
+typedef uint8_t B3RetransmitRejectCode;
+#define B3_RETRANSMIT_REJECT_OUT_OF_RANGE 0
+#define B3_RETRANSMIT_REJECT_INVALID_SESSION 1
+#define B3_RETRANSMIT_REJECT_REQUEST_LIMIT_EXCEEDED 2
+#define B3_RETRANSMIT_REJECT_RETRANSMIT_IN_PROGRESS 3
+#define B3_RETRANSMIT_REJECT_INVALID_TIMESTAMP 4
+#define B3_RETRANSMIT_REJECT_INVALID_FROMSEQNO 5
+#define B3_RETRANSMIT_REJECT_INVALID_COUNT 9
+#define B3_RETRANSMIT_REJECT_THROTTLE_REJECT 10
+#define B3_RETRANSMIT_REJECT_SYSTEM_BUSY 11
+
+typedef uint8_t B3TerminationCode;
+#define B3_TERMINATION_UNSPECIFIED 0
+#define B3_TERMINATION_FINISHED 1
+#define B3_TERMINATION_UNNEGOTIATED 2
+#define B3_TERMINATION_NOT_ESTABLISHED 3
+#define B3_TERMINATION_SESSION_BLOCKED 4
+#define B3_TERMINATION_NEGOTIATION_IN_PROGRESS 5
+#define B3_TERMINATION_ESTABLISH_IN_PROGRESS 6
+#define B3_TERMINATION_KEEPALIVE_INTERVAL_LAPSED 10
+#define B3_TERMINATION_INVALID_SESSIONID 11
+#define B3_TERMINATION_INVALID_SESSIONVERID 12
+#define B3_TERMINATION_INVALID_TIMESTAMP 13
+#define B3_TERMINATION_INVALID_NEXTSEQNO 14
+#define B3_TERMINATION_UNRECOGNIZED_MESSAGE 15
+#define B3_TERMINATION_INVALID_SOFH 16
+#define B3_TERMINATION_DECODING_ERROR 17
+#define B3_TERMINATION_NOT_ALLOWED 20
+#define B3_TERMINATION_IN_PROGRESS 21
+#define B3_TERMINATION_PROTOCOL_VERSION_NOT_SUPPORTED 23
+#define B3_TERMINATION_BACKUP_TAKEOVER_IN_PROGRESS 30
+
+typedef uint8_t B3SelfTradePreventionInstruction;
+#define B3_SELF_TRADE_PREVENTION_NONE 0
+#define B3_SELF_TRADE_PREVENTION_AGGRESSOR 1
+#define B3_SELF_TRADE_PREVENTION_RESTING 2
+#define B3_SELF_TRADE_PREVENTION_BOTH 3
+
+typedef uint8_t B3RoutingInstruction;
+#define B3_ROUTING_RETAIL_LIQUIDITY_TAKER 1
+#define B3_ROUTING_WAIVED_PRIORITY 2
+#define B3_ROUTING_BROKER_ONLY 3
+#define B3_ROUTING_BROKER_ONLY_REMOVAL 4
+
+typedef uint8_t B3ExecRRVFSC;
+#define B3_EXEC_RRVFSC_CANCEL_DUE_TO_OP_ERROR 203
+
+typedef uint8_t B3ExecRestatementReason;
+#define B3_EXEC_RESTATEMENT__MARKET_OPTION 8
+#define B3_EXEC_RESTATEMENT_CANCEL_ON_HARD_DISCONNECTION 100
+#define B3_EXEC_RESTATEMENT_CANCEL_ON_TERMINATE 101
+#define B3_EXEC_RESTATEMENT_CANCEL_ON_DISCONNECT_AND_TERMINATE 102
+#define B3_EXEC_RESTATEMENT_SELF_TRADING_PREVENTION 103
+#define B3_EXEC_RESTATEMENT_CANCEL_FROM_FIRMSOFT 105
+#define B3_EXEC_RESTATEMENT_CANCEL_RESTING_ORDER_ON_SELF_TRADE 107
+#define B3_EXEC_RESTATEMENT_MARKET_MAKER_PROTECTION 200
+#define B3_EXEC_RESTATEMENT_RISK_MANAGEMENT_CANCELLATION 201
+#define B3_EXEC_RESTATEMENT_ORDER_MASS_ACTION_FROM_CLIENT_REQUEST 202
+#define B3_EXEC_RESTATEMENT_CANCEL_ORDER_DUE_TO_OP_ERROR 203
+#define B3_EXEC_RESTATEMENT_ORDER_CANCELLED_DUE_TO_OP_ERROR 204
+
+/* I don't know why this exists. */
+typedef uint8_t B3PossResend;
+#define B3_POSS_RESEND_FALSE 0
+#define B3_POSS_RESEND_TRUE 1
+
+/* Same. */
+typedef uint8_t B3ExecuteUnderlyingTrade;
+#define B3_EXECUTE_UNDERLYING_TRADE_NO 0
+#define B3_EXECUTE_UNDERLYING_TRADE_OPPOSING 1
+
+typedef uint8_t B3AccountType;
+#define B3_ACCOUNT_TYPE_REMOVE_INFO 38
+#define B3_ACCOUNT_TYPE_REGULAR 39
+
+typedef uint8_t B3CxlRejResponseTo;
+#define B3_CXL_REJ_RESPONSE_TO_NEW 0
+#define B3_CXL_REJ_RESPONSE_TO_CANCEL 1
+#define B3_CXL_REJ_RESPONSE_TO_REPLACE 2
+
+typedef uint8_t B3ExecRRVFMC;
+#define B3_EXEC_RRVFMC_ORDER_MASS_ACTION 202
+#define B3_EXEC_RRVFMC_ORDER_MASS_CANCEL 207
+
+typedef uint8_t B3MessageType;
+#define B3_MESSAGE_TYPE_NEGOTIATE 0
+#define B3_MESSAGE_TYPE_NEGOTIATE_RESPONSE 1
+#define B3_MESSAGE_TYPE_NEGOTIATE_REJECT 2
+#define B3_MESSAGE_TYPE_ESTABLISH 3
+#define B3_MESSAGE_TYPE_ESTABLISH_ACK 4
+#define B3_MESSAGE_TYPE_ESTABLISH_REJECT 5
+#define B3_MESSAGE_TYPE_TERMINATE 6
+#define B3_MESSAGE_TYPE_NOT_APPLIED 9
+#define B3_MESSAGE_TYPE_RETRANSMIT_REQUEST 10
+#define B3_MESSAGE_TYPE_RETRANSMISSION 11
+#define B3_MESSAGE_TYPE_RETRANSMIT_REJECT 12
+#define B3_MESSAGE_TYPE_SEQUENCE 13
+#define B3_MESSAGE_TYPE_BUSINESS_MESSAGE_REJECT 14
+#define B3_MESSAGE_TYPE_SIMPLE_NEW_ORDER 15
+#define B3_MESSAGE_TYPE_SIMPLE_MODIFY_ORDER 16
+#define B3_MESSAGE_TYPE_NEW_ORDER_SINGLE 17
+#define B3_MESSAGE_TYPE_ORDER_CANCEL_REPLACE_REQUEST 18
+#define B3_MESSAGE_TYPE_ORDER_CANCEL_REQUEST 19
+#define B3_MESSAGE_TYPE_NEW_ORDER_CROSS 20
+#define B3_MESSAGE_TYPE_EXECUTION_REPORT_NEW 21
+#define B3_MESSAGE_TYPE_EXECUTION_REPORT_MODIFY 22
+#define B3_MESSAGE_TYPE_EXECUTION_REPORT_CANCEL 23
+#define B3_MESSAGE_TYPE_EXECUTION_REPORT_TRADE 24
+#define B3_MESSAGE_TYPE_EXECUTION_REPORT_REJECT 25
+#define B3_MESSAGE_TYPE_EXECUTION_REPORT_FORWARD 26
+#define B3_MESSAGE_TYPE_SECURITY_DEFINITION_REQUEST 27
+#define B3_MESSAGE_TYPE_SECURITY_DEFINITION_RESPONSE 28
+#define B3_MESSAGE_TYPE_ORDER_MASS_ACTION_REQUEST 29
+#define B3_MESSAGE_TYPE_ORDER_MASS_ACTION_REPORT 30
+#define B3_MESSAGE_TYPE_QUOTE_REQUEST 31
+#define B3_MESSAGE_TYPE_QUOTE_STATUS_REPORT 32
+#define B3_MESSAGE_TYPE_QUOTE 33
+#define B3_MESSAGE_TYPE_QUOTE_CANCEL 34
+#define B3_MESSAGE_TYPE_QUOTE_REQUEST_REJECT 35
+#define B3_MESSAGE_TYPE_POSITION_MAINTENANCE_CANCEL_REQUEST 36
+#define B3_MESSAGE_TYPE_POSITION_MAINTENANCE_REQUEST 37
+#define B3_MESSAGE_TYPE_POSITION_MAINTENANCE_REPORT 38
+#define B3_MESSAGE_TYPE_ALLOCATION_INSTRUCTION 39
+#define B3_MESSAGE_TYPE_ALLOCATION_REPORT 40
+
+typedef uint8_t B3MassActionType;
+#define B3_MASS_ACTION_TYPE_RELEASE_FROM_SUSPENSION 2
+#define B3_MASS_ACTION_TYPE_CANCEL 3
+#define B3_MASS_ACTION_TYPE_CANCEL_AND_SUSPEND 4
+#define B3_MASS_ACTION_TYPE_SESSION_GROUP_QUERY 5
+
+typedef uint8_t B3MassActionScope;
+#define B3_MASS_ACTION_SCOPE_ALL_FOR_SESSION 6
+
+typedef uint8_t B3MassActionRejectReason;
+#define B3_MASS_ACTION_REJ_REASON_NOT_SUPPORTED 0
+#define B3_MASS_ACTION_REJ_REASON_INVALID_MS 8
+#define B3_MASS_ACTION_REJ_REASON_OTHER 99
+
+typedef uint8_t B3SecurityResponseType;
+#define B3_SECURITY_RESPONSE_ACCEPT 1
+#define B3_SECURITY_RESPONSE_ACCEPT_WITH_REVISIONS 2
+#define B3_SECURITY_RESPONSE_REJECT 5
+
+typedef uint8_t B3QuoteStatus;
+#define B3_QUOTE_EXPIRED 7
+#define B3_QUOTE_ACCEPTED 0
+#define B3_QUOTE_REJECTED 5
+#define B3_QUOTE_QUOTE_NOT_FOUND 9
+#define B3_QUOTE_PENDING 10
+#define B3_QUOTE_PASS 11
+#define B3_QUOTE_CANCELED 17
+
+typedef uint8_t B3PosTransType;
+#define B3_POS_TRANS_EXERCISE 1
+#define B3_POS_TRANS_AUTOMATIC_EXERCISE 105
+#define B3_POS_TRANS_EXERCISE_NOT_AUTOMATIC 106
+
+typedef uint8_t B3MassActionResponse;
+#define B3_MASS_ACTION_RESPONSE_REJECTED ((uint8_t) '0')
+#define B3_MASS_ACTION_RESPONSE_ACCEPTED ((uint8_t) '1')
+
+typedef uint8_t B3SimpleOrdType;
+#define B3_SIMPLE_ORD_TYPE_MARKET ((uint8_t) '1')
+#define B3_SIMPLE_ORD_TYPE_LIMIT ((uint8_t) '2')
+
+typedef uint8_t B3SimpleTimeInForce;
+#define B3_SIMPLE_TIME_IN_FORCE_DAY ((uint8_t) '0')
+#define B3_SIMPLE_TIME_IN_FORCE_IMM_OR_CANCEL ((uint8_t) '3')
+#define B3_SIMPLE_TIME_IN_FORCE_FILL_OR_KILL ((uint8_t) '4')
+
+typedef uint8_t B3TimeInForce;
+#define B3_TIME_IN_FORCE_DAY ((uint8_t) '0')
+#define B3_TIME_IN_FORCE_GOOD_TILL_CANCEL ((uint8_t) '1')
+#define B3_TIME_IN_FORCE_IMM_OR_CANCEL ((uint8_t) '3')
+#define B3_TIME_IN_FORCE_FILL_OR_KILL ((uint8_t) '4')
+
+typedef uint8_t B3OrdStatus;
+#define B3_ORD_STATUS_NEW ((uint8_t) '0')
+#define B3_ORD_STATUS_PARTIALLY_FILLED ((uint8_t) '1')
+#define B3_ORD_STATUS_FILLED ((uint8_t) '2')
+#define B3_ORD_STATUS_CANCELED ((uint8_t) '4')
+#define B3_ORD_STATUS_REPLACED ((uint8_t) '5')
+#define B3_ORD_STATUS_REJECTED ((uint8_t) '8')
+#define B3_ORD_STATUS_EXPIRED ((uint8_t) 'C')
+#define B3_ORD_STATUS_RESTATED ((uint8_t) 'R')
+#define B3_ORD_STATUS_PREVIOUS_FINAL_STATE ((uint8_t) 'Z')
+
+typedef uint8_t B3OrdType;
+#define B3_ORD_MARKET ((uint8_t) '1')
+#define B3_ORD_LIMIT ((uint8_t) '2')
+#define B3_ORD_STOP_LOSS ((uint8_t) '3')
+#define B3_ORD_STOP_LIMIT ((uint8_t) '4')
+#define B3_ORD_MARKET_WITH_LEFTOVER_AS_LIMIT ((uint8_t) 'K')
+#define B3_ORD_RLP ((uint8_t) 'W')
+#define B3_ORD_PEGGED_MIDPOINT ((uint8_t) 'P')
+
+typedef uint8_t B3MultiLegReportingType;
+#define B3_MULTILEG_SINGLE ((uint8_t) '1')
+#define B3_MULTILEG_INDIVIDUALLEG_OF_MULTILEG ((uint8_t) '2')
+#define B3_MULTILEG ((uint8_t) '3')
+
+typedef uint8_t B3ExecType;
+#define B3_EXEC_TYPE_TRADE ((uint8_t) 'F')
+#define B3_EXEC_TYPE_TRADE_CANCEL ((uint8_t) 'H')
+
+typedef uint8_t B3OrderCategory;
+#define B3_ORDER_CATEGORY_OPTIONS_EXERCISE ((uint8_t) 'B')
+#define B3_ORDER_CATEGORY_ASSIGNMENT_FROM_AN_OPTIONS_EXERCISE ((uint8_t) 'C')
+#define B3_ORDER_CATEGORY_AUTOMATIC_OPTIONS_EXERCISE ((uint8_t) 'D')
+#define B3_ORDER_CATEGORY_MIDPOINT_ORDER ((uint8_t) 'E')
+#define B3_ORDER_CATEGORY_BLOCK_BOOK_TRADE ((uint8_t) 'F')
+#define B3_ORDER_CATEGORY_TRADE_AT_CLOSE ((uint8_t) 'G')
+#define B3_ORDER_CATEGORY_TRADE_AT_AVERAGE ((uint8_t) 'H')
+
+typedef uint8_t B3PosMaintAction;
+#define B3_POS_MAINT_ACTION_NEW ((uint8_t) '1')
+#define B3_POS_MAINT_ACTION_CANCEL ((uint8_t) '3')
+
+typedef uint8_t B3PosMaintStatus;
+#define B3_POS_MAINT_STATUS_ACCEPTED ((uint8_t) '0')
+#define B3_POS_MAINT_STATUS_REJECTED ((uint8_t) '2')
+#define B3_POS_MAINT_STATUS_COMPLETED ((uint8_t) '3')
+#define B3_POS_MAINT_STATUS_NOT_EXECUTED ((uint8_t) '9')
+
+typedef uint8_t B3PosType;
+#define B3_POS_TYPE_TRANSACTION_QUANTITY ((uint8_t) 'T')
+#define B3_POS_TYPE_START_OF_DAY_QTY ((uint8_t) 'S')
+#define B3_POS_TYPE_OPTION_EXERCISE_QTY ((uint8_t) 'E')
+#define B3_POS_TYPE_BLOCKED_QTY ((uint8_t) 'B')
+#define B3_POS_TYPE_UNCOVERED_QTY ((uint8_t) 'U')
+#define B3_POS_TYPE_COVERED_QTY ((uint8_t) 'C')
+
+typedef uint8_t B3AllocTransType;
+#define B3_ALLOC_TRANS_TYPE_NEW ((uint8_t) '0')
+#define B3_ALLOC_TRANS_TYPE_CANCEL ((uint8_t) '2')
+
+typedef uint8_t B3AllocType;
+#define B3_ALLOC_TYPE_REQUEST_TO_INTERMEDIARY ((uint8_t) '8')
+
+typedef uint8_t B3AllocReportType;
+#define B3_ALLOC_REPORT_TYPE_REQUEST_TO_INTERMEDIARY ((uint8_t) '8')
+
+typedef uint8_t B3AllocNoOrdersType;
+#define B3_ALLOC_NO_ORDERS_TYPE_NOT_SPECIFIED ((uint8_t) '0')
+
+typedef uint8_t B3AllocStatus;
+#define B3_ALLOC_STATUS_ACCEPTED ((uint8_t) '0')
+#define B3_ALLOC_STATUS_REJECTED_BY_INTERMEDIARY ((uint8_t) '5')
+
+/* This enum is the reason why we need to enforce enum sizes. */
+typedef uint16_t B3CrossedIndicator;
+#define B3_CROSSED_STRUCTURED_TRANSACTION 1001
+#define B3_CROSSED_OPERATIONAL_ERROR 1002
+#define B3_CROSSED_TWAP_VWAP 1003
+
+typedef uint8_t B3OrdTagID;
+typedef uint8_t B3TotNoRelatedSym;
+
+typedef uint8_t B3SenderLocation[10];
+typedef uint8_t B3Trader[5];
+
+typedef uint16_t B3DaysToSettlement;
+
+typedef uint32_t B3SessionID;
+typedef uint32_t B3MessageCounter;
+typedef uint32_t B3Account;
+typedef uint32_t B3RejReason;
+
+typedef uint64_t B3SessionVerID;
+typedef uint64_t B3DeltaInMillis;
+typedef uint64_t B3ClOrdID;
+typedef uint64_t B3CrossID;
+typedef uint64_t B3ExecID;
+typedef uint64_t B3MassActionReportID;
+typedef uint64_t B3SendingTime;
+typedef uint64_t B3BusinessRejectRefID;
+typedef uint64_t B3SecurityReqRespID;
+typedef uint64_t B3QuoteID;
+typedef uint64_t B3PosReqID;
+typedef uint64_t B3PosMaintRptID;
+typedef uint64_t B3AllocID;
+typedef uint64_t B3AllocReportID;
+
+typedef int64_t B3PriceOffset;
+
+typedef struct {
+	B3SessionID session_id;
+	B3SeqNum msg_seq_num;
+	B3SendingTime sending_time;
+	B3MarketSegmentID market_segment_id;
+	uint8_t __padding__;
+}__attribute__((packed)) B3InboundBusinessHeader;
+
+typedef struct {
+	uint16_t prefix;
+	/* This is documented as "padding" but it's reserved for future use and
+	 * shall be filled with 0. */
+	uint16_t reserved;
+	uint32_t document;
+}__attribute__((packed)) B3InvestorID;
+
+typedef struct {
+	uint32_t custodian;
+	uint32_t custody_account;
+	uint32_t custody_allocation_type;
+}__attribute__((packed)) B3CustodianInfo;
+
+typedef struct {
+	uint16_t block_length;
+	uint8_t num_in_group;
+}__attribute__((packed)) B3GroupSizeEncoding;
+
+typedef struct {
+	B3SessionID session_id;
+	B3SeqNum msg_seq_num;
+	B3SendingTime sending_time;
+	B3PossResend poss_resend;
+	uint8_t __padding__;
+}__attribute__((packed)) B3OutboundBusinessHeader;
+
+typedef struct {
+	B3SessionID session_id;
+	B3SeqNum msg_seq_num;
+	B3SendingTime sending_time;
+	B3PossResend poss_resend;
+	B3MarketSegmentID market_segment_id;
+	uint16_t __padding__;
+}__attribute__((packed)) B3BidirectionalBusinessHeader;
+
+/* Does not contain credentials, client IP, client app name and client app
+ * version. */
+typedef struct {
+	B3SessionID session_id;
+	B3SessionVerID session_ver_id;
+	B3UTCTimestampNanos timestamp;
+	B3Firm entering_firm;
+	B3Firm on_behalf_firm;
+}__attribute__((packed)) B3MessagePNegotiate;
+
+typedef struct {
+	B3SessionID session_id;
+	B3SessionVerID session_ver_id;
+	B3UTCTimestampNanos request_timestamp;
+	B3Firm entering_firm;
+}__attribute__((packed)) B3MessagePNegotiateResponse;
+
+typedef struct {
+	B3SessionID session_id;
+	B3SessionVerID session_ver_id;
+	B3UTCTimestampNanos request_timestamp;
+	B3Firm entering_firm;
+	B3NegotiationRejectCode reject_code;
+	uint16_t __padding__;
+	uint8_t __padding2__;
+	B3SessionVerID current_session_ver_id;
+}__attribute__((packed)) B3MessagePNegotiateReject;
+
+/* Does not contain credentials. */
+typedef struct {
+	B3SessionID session_id;
+	B3SessionVerID session_ver_id;
+	B3UTCTimestampNanos timestamp;
+	B3DeltaInMillis keep_alive_interval;
+	B3SeqNum next_seq_no;
+	B3CancelOnDisconnectType cod_type;
+	uint8_t __padding__;
+	B3DeltaInMillis cod_timeout_window;
+}__attribute__((packed)) B3MessagePEstabilish;
+
+typedef struct {
+	B3SessionID session_id;
+	B3SessionVerID session_ver_id;
+	B3UTCTimestampNanos request_timestamp;
+	B3DeltaInMillis keep_alive_interval;
+	B3SeqNum next_seq_no;
+	B3SeqNum last_incoming_seq_no;
+}__attribute__((packed)) B3MessagePEstabilishAck;
+
+typedef struct {
+	B3SessionID session_id;
+	B3SessionVerID session_ver_id;
+	B3UTCTimestampNanos request_timestamp;
+	B3EstabilishRejectCode reject_code;
+	uint8_t __padding__;
+	B3SeqNum last_incoming_seq_no;
+}__attribute__((packed)) B3MessagePEstabilishReject;
+
+typedef struct {
+	B3SeqNum next_seq_no;
+}__attribute__((packed)) B3MessagePSequence;
+
+typedef struct {
+	B3SeqNum from_seq_no;
+	B3MessageCounter count;
+}__attribute__((packed)) B3MessagePNotApplied;
+
+typedef struct {
+	B3SessionID session_id;
+	B3UTCTimestampNanos timestamp;
+	B3SeqNum from_seq_no;
+	B3MessageCounter count;
+}__attribute__((packed)) B3MessagePRetransmitRequest;
+
+typedef struct {
+	B3SessionID session_id;
+	B3UTCTimestampNanos request_timestamp;
+	B3SeqNum next_seq_no;
+	B3MessageCounter count;
+}__attribute__((packed)) B3MessagePRetransmission;
+
+typedef struct {
+	B3SessionID session_id;
+	B3UTCTimestampNanos request_timestamp;
+	B3RetransmitRejectCode code;
+}__attribute__((packed)) B3MessagePRetransmitReject;
+
+typedef struct {
+	B3SessionID session_id;
+	B3UTCTimestampNanos request_timestamp;
+	B3TerminationCode code;
+}__attribute__((packed)) B3MessagePTerminate;
+
+/* Does not contain the memo. */
+typedef struct {
+	B3InboundBusinessHeader business_header;
+	B3OrdTagID ord_tag_id;
+	uint8_t has_mm_protection_reset;
+	B3ClOrdID cl_ord_id;
+	B3Account account;
+	B3SenderLocation sender_location;
+	B3Trader entering_trader;
+	B3SelfTradePreventionInstruction self_trade_pi;
+	B3SecurityID security_id;
+	B3Side side;
+	B3SimpleOrdType ord_type;
+	B3SimpleTimeInForce time_in_force;
+	B3RoutingInstruction routing_instruction;
+	B3Quantity quantity;
+	B3Price price;
+	B3InvestorID investor_id;
+}__attribute__((packed)) B3MessagePSimpleNewOrder;
+
+/* Same. */
+typedef struct {
+	B3InboundBusinessHeader business_header;
+	B3OrdTagID ord_tag_id;
+	uint8_t has_mm_protection_reset;
+	B3ClOrdID cl_ord_id;
+	B3Account account;
+	B3SenderLocation sender_location;
+	B3Trader entering_trader;
+	B3SelfTradePreventionInstruction self_trade_pi;
+	B3SecurityID security_id;
+	B3Side side;
+	B3SimpleOrdType ord_type;
+	B3SimpleTimeInForce time_in_force;
+	B3RoutingInstruction routing_instruction;
+	B3Quantity quantity;
+	B3Price price;
+	B3OrderID order_id;
+	B3ClOrdID orig_cl_order_id;
+	B3InvestorID investor_id;
+}__attribute__((packed)) B3MessagePSimpleModifyOrder;
+
+/* Does not contain desk id nor memo. */
+typedef struct {
+	B3InboundBusinessHeader business_header;
+	B3OrdTagID ord_tag_id;
+	uint8_t has_mm_protection_reset;
+	B3ClOrdID cl_ord_id;
+	B3Account account;
+	B3SenderLocation sender_location;
+	B3Trader entering_trader;
+	B3SelfTradePreventionInstruction self_trade_pi;
+	B3SecurityID security_id;
+	B3Side side;
+	B3OrdType ord_type;
+	B3TimeInForce time_in_force;
+	B3RoutingInstruction routing_instruction;
+	B3Quantity quantity;
+	B3Price price;
+	B3Price stop_px;
+	B3Quantity min_quantity;
+	B3Quantity max_floor;
+	B3Trader executing_trader;
+	B3LocalMktDate expire_date;
+	B3CustodianInfo custodian_info;
+	B3InvestorID investor_id;
+}__attribute__((packed)) B3MessagePNewOrderSingle;
+
+/* Same. */
+typedef struct {
+	B3InboundBusinessHeader business_header;
+	B3OrdTagID ord_tag_id;
+	uint8_t has_mm_protection_reset;
+	B3ClOrdID cl_ord_id;
+	B3Account account;
+	B3SenderLocation sender_location;
+	B3Trader entering_trader;
+	B3SelfTradePreventionInstruction self_trade_pi;
+	B3SecurityID security_id;
+	B3Side side;
+	B3OrdType ord_type;
+	B3TimeInForce time_in_force;
+	B3RoutingInstruction routing_instruction;
+	B3Quantity quantity;
+	B3Price price;
+	B3OrderID order_id;
+	B3ClOrdID orig_cl_order_id;
+	B3Price stop_px;
+	B3Quantity min_quantity;
+	B3Quantity max_floor;
+	B3Trader executing_trader;
+	B3AccountType account_type;
+	B3LocalMktDate expire_date;
+	B3CustodianInfo custodian_info;
+	B3InvestorID investor_id;
+}__attribute__((packed)) B3MessagePOrderCancelReplaceRequest;
+
+/* Same. */
+typedef struct {
+	B3InboundBusinessHeader business_header;
+	uint16_t __padding__;
+	B3ClOrdID cl_ord_id;
+	B3SecurityID security_id;
+	B3OrderID order_id;
+	B3ClOrdID orig_cl_ord_id;
+	B3Side side;
+	B3ExecRRVFSC exec_rrvfsc;
+	uint16_t __padding2__;
+	B3SenderLocation sender_location;
+	B3Trader entering_trader;
+	B3Trader executing_trader;
+}__attribute__((packed)) B3MessagePOrderCancelRequest;
+
+/* Same. */
+typedef struct {
+	B3InboundBusinessHeader business_header;
+	uint16_t __padding__;
+	B3CrossID cross_id;
+	B3SenderLocation sender_location;
+	B3Trader entering_trader;
+	B3Trader executing_trader;
+	B3SecurityID security_id;
+	B3Quantity order_quantity;
+	B3Price price;
+	B3CrossedIndicator crossed_indicator;
+	B3GroupSizeEncoding no_sides;
+	B3Side side;
+	uint8_t __padding2__;
+	B3Account account;
+	B3Firm entering_firm;
+	B3ClOrdID cl_ord_id;
+}__attribute__((packed)) B3MessagePNewOrderCross;
+
+/* Same. */
+typedef struct {
+	B3OutboundBusinessHeader business_header;
+	B3Side side;
+	B3OrdStatus ord_status;
+	B3ClOrdID cl_ord_id;
+	B3OrderID secondary_order_id;
+	B3SecurityID security_id;
+	B3OrderID order_id;
+	B3Account account;
+	B3ExecID exec_id;
+	B3UTCTimestampNanos transact_time;
+	B3UTCTimestampNanos market_segment_received_time;
+	B3Price protection_price;
+	B3LocalMktDate trade_date;
+	uint8_t is_working;
+	B3MultiLegReportingType multileg_reporting_type;
+	B3OrdType ord_type;
+	B3TimeInForce time_in_force;
+	B3LocalMktDate expire_date;
+	B3Quantity order_quantity;
+	B3Price price;
+	B3Price stop_px;
+	B3Quantity min_quantity;
+	B3Quantity max_floor;
+	B3CrossID cross_id;
+}__attribute__((packed)) B3MessagePExecutionReportNew;
+
+/* Same. */
+typedef struct {
+	B3OutboundBusinessHeader business_header;
+	B3Side side;
+	B3OrdStatus ord_status;
+	B3ClOrdID cl_ord_id;
+	B3OrderID secondary_order_id;
+	B3SecurityID security_id;
+	B3Quantity leaves_quantity;
+	B3Account account;
+	B3ExecID exec_id;
+	B3UTCTimestampNanos transact_time;
+	B3Quantity cum_quantity;
+	B3UTCTimestampNanos market_segment_received_time;
+	B3OrderID order_id;
+	B3ClOrdID orig_cl_ord_id;
+	B3Price protection_price;
+	B3LocalMktDate trade_date;
+	uint8_t is_working;
+	B3MultiLegReportingType multileg_reporting_type;
+	B3OrdType ord_type;
+	B3TimeInForce time_in_force;
+	B3LocalMktDate expire_date;
+	B3Quantity order_quantity;
+	B3Price price;
+	B3Price stop_px;
+	B3Quantity min_quantity;
+	B3Quantity max_floor;
+}__attribute__((packed)) B3MessagePExecutionReportModify;
+
+/* Same. */
+typedef struct {
+	B3OutboundBusinessHeader business_header;
+	B3Side side;
+	B3OrdStatus ord_status;
+	B3ClOrdID cl_ord_id;
+	B3OrderID secondary_order_id;
+	B3SecurityID security_id;
+	B3Quantity cum_quantity;
+	B3Account account;
+	B3ExecID exec_id;
+	B3UTCTimestampNanos transact_time;
+	B3UTCTimestampNanos market_segment_received_time;
+	B3OrderID order_id;
+	B3ClOrdID orig_cl_ord_id;
+	B3LocalMktDate trade_date;
+	uint8_t is_working;
+	B3ExecRestatementReason exec_restatement_reason;
+	uint32_t __padding__;
+	B3MassActionReportID mass_action_report_id;
+	B3OrdType ord_type;
+	B3TimeInForce time_in_force;
+	B3LocalMktDate expire_date;
+	B3Quantity order_quantity;
+	B3Price price;
+	B3Price stop_px;
+	B3Quantity min_quantity;
+	B3Quantity max_floor;
+}__attribute__((packed)) B3MessagePExecutionReportCancel;
+
+/* Does not contain desk id, memo nor text. */
+typedef struct {
+	B3OutboundBusinessHeader business_header;
+	B3Side side;
+	B3OrdStatus ord_status;
+	B3CxlRejResponseTo cxl_rej_response_to;
+	B3ClOrdID cl_ord_id;
+	B3OrderID secondary_order_id;
+	B3SecurityID security_id;
+	B3RejReason ord_rej_reason;
+	B3UTCTimestampNanos transact_time;
+	B3ExecID exec_id;
+	B3OrderID order_id;
+	B3ClOrdID orig_ci_ord_id;
+	B3Account account;
+	B3OrdType ord_type;
+	B3TimeInForce time_in_force;
+	B3LocalMktDate expire_date;
+	B3Quantity order_quantity;
+	B3Price price;
+	B3Price stop_px;
+	B3Quantity min_quantity;
+	B3Quantity max_floor;
+	B3CrossID cross_id;
+	B3CrossedIndicator crossed_indicator;
+}__attribute__((packed)) B3MessagePExecutionReportReject;
+
+/* Does not contain desk id nor memo. */
+typedef struct {
+	B3OutboundBusinessHeader business_header;
+	B3Side side;
+	B3OrdStatus ord_status;
+	B3ClOrdID cl_ord_id;
+	B3OrderID secondary_order_id;
+	B3SecurityID security_id;
+	B3Account account;
+	B3Quantity last_quantity;
+	B3Price last_px;
+	B3ExecID exec_id;
+	B3UTCTimestampNanos transact_time;
+	B3Quantity leaves_quantity;
+	B3Quantity cum_quantity;
+	uint8_t is_aggressor;
+	B3ExecType exec_type;
+	B3OrderCategory order_category;
+	B3MultiLegReportingType multileg_reporting_type;
+	B3TradeID trade_id;
+	B3Firm contra_broker;
+	B3OrderID order_id;
+	B3LocalMktDate trade_date;
+	B3TotNoRelatedSym tot_no_related_sym;
+	uint8_t __padding__;
+	B3ExecID secondary_exec_id;
+	B3ExecID exec_ref_id;
+	B3CrossID cross_id;
+	B3CrossedIndicator crossed_indicator;
+	B3Quantity order_quantity;
+}__attribute__((packed)) B3MessagePExecutionReportTrade;
+
+/* Same. */
+typedef struct {
+	B3OutboundBusinessHeader business_header;
+	B3Side side;
+	B3OrdStatus ord_status;
+	B3ClOrdID cl_ord_id;
+	B3OrderID secondary_order_id;
+	B3SecurityID security_id;
+	B3Account account;
+	B3Quantity last_quantity;
+	B3Price last_px;
+	B3ExecID exec_id;
+	B3UTCTimestampNanos transact_time;
+	B3Quantity leaves_quantity;
+	B3Quantity cum_quantity;
+	B3TradeID trade_id;
+	B3Firm contra_broker;
+	B3OrderID order_id;
+	uint8_t is_aggressor;
+	B3SettlType settl_type;
+	B3LocalMktDate trade_date;
+	B3DaysToSettlement days_to_settlement;
+	uint16_t __padding__;
+	B3ExecID secondary_exec_id;
+	B3ExecID exec_ref_id;
+	B3Percentage fixed_rate;
+	B3Quantity order_quantity;
+}__attribute__((packed)) B3MessagePExecutionReportForward;
+
+typedef struct {
+	B3InboundBusinessHeader business_header;
+	B3MassActionType mass_action_type;
+	B3MassActionScope mass_action_scope;
+	B3ClOrdID cl_ord_id;
+	B3ExecRestatementReason exec_restatement_reason;
+	B3OrdTagID ord_tag_id;
+	B3Side side;
+	uint8_t __padding__;
+	B3Asset asset;
+	B3SecurityID security_id;
+	B3InvestorID investor_id;
+}__attribute__((packed)) B3MessagePOrderMassActionRequest;
+
+/* Does not contains the text. */
+typedef struct {
+	B3OutboundBusinessHeader business_header;
+	B3MassActionType mass_action_type;
+	B3MassActionScope mass_action_scope;
+	B3ClOrdID cl_ord_id;
+	B3MassActionReportID mass_action_report_id;
+	B3UTCTimestampNanos transact_time;
+	B3MassActionResponse mass_action_response;
+	B3MassActionRejectReason mass_action_reject_reason;
+	B3ExecRRVFMC exec_restatement_reason;
+	B3OrdTagID ord_tag_id;
+	B3Side side;
+	uint8_t __padding__;
+	B3Asset asset;
+	B3SecurityID security_id;
+	B3InvestorID investor_id;
+}__attribute__((packed)) B3MessagePOrderMassActionReport;
+
+/* Does not contain memo nor text. */
+typedef struct {
+	B3OutboundBusinessHeader business_header;
+	B3MessageType ref_msg_type;
+	uint8_t __padding__;
+	B3SeqNum ref_seq_num;
+	B3BusinessRejectRefID business_reject_ref_id;
+	B3RejReason business_rej_reason;
+}__attribute__((packed)) B3MessagePBusinessMessageReject;
+
+typedef struct {
+	B3InboundBusinessHeader business_header;
+	B3SecurityReqRespID security_req_id;
+	B3SenderLocation sender_location;
+	B3Trader entering_trader;
+	B3GroupSizeEncoding no_legs;
+	B3Symbol leg_symbol;
+	B3RatioQty leg_ratio_qty;
+	B3Side leg_side;
+}__attribute__((packed)) B3MessagePSecurityDefinitionRequest;
+
+typedef struct {
+	B3OutboundBusinessHeader business_header;
+	uint16_t __padding__;
+	B3SecurityReqRespID security_req_id;
+	B3SecurityID security_id;
+	B3SecurityResponseType security_response_type;
+	B3SecurityStrategyType security_strategy_type;
+	B3Symbol symbol;
+	B3SecurityReqRespID security_response_id;
+	B3SenderLocation sender_location;
+	B3Trader entering_trader;
+}__attribute__((packed)) B3MessagePSecurityDefinitionResponse;
+
+/* Does not contain quote req id, desk id nor memo. */
+typedef struct {
+	B3BidirectionalBusinessHeader business_header;
+	B3SecurityID security_id;
+	B3QuoteID quote_id;
+	B3TradeID trade_id;
+	B3Firm contra_broker;
+	B3UTCTimestampNanos transact_time;
+	B3Price price;
+	B3SettlType settl_type;
+	B3ExecuteUnderlyingTrade execute_underlying_trade;
+	B3Quantity order_quantity;
+	B3SenderLocation sender_location;
+	B3Trader entering_trader;
+	B3Percentage fixed_rate;
+	B3DaysToSettlement days_to_settlement;
+	B3GroupSizeEncoding no_sides;
+	B3Side side;
+	B3Account account;
+}__attribute__((packed)) B3MessagePQuoteRequest;
+
+/* Does not contain quote req id, desk id, memo nor text. */
+typedef struct {
+	B3BidirectionalBusinessHeader business_header;
+	B3RejReason quote_reject_reason;
+	B3SecurityID security_id;
+	B3QuoteID quote_id;
+	B3TradeID trade_id;
+	B3Firm contra_broker;
+	B3UTCTimestampNanos transact_time;
+	B3QuoteStatus quote_status;
+	B3QuoteStatus quote_status_response_status;
+	B3Account account;
+	B3Side side;
+	B3SettlType settl_type;
+	B3Price price;
+	B3Quantity order_quantity;
+	B3SenderLocation sender_location;
+	B3Trader entering_trader;
+	B3Trader executing_trader;
+	B3Percentage fixed_rate;
+	B3ExecuteUnderlyingTrade execute_underlying_trade;
+	B3DaysToSettlement days_to_settlement;
+}__attribute__((packed)) B3MessagePQuoteStatusReport;
+
+/* Does not contain quote req id, desk id, nor memo. */
+typedef struct {
+	B3BidirectionalBusinessHeader business_header;
+	B3SecurityID security_id;
+	B3QuoteID quote_id;
+	B3UTCTimestampNanos transact_time;
+	B3Price price;
+	B3Quantity order_quantity;
+	B3Side side;
+	B3SettlType settl_type;
+	B3Account account;
+	B3SenderLocation sender_location;
+	B3Trader entering_trader;
+	B3Trader executing_trader;
+	B3Percentage fixed_rate;
+	B3ExecuteUnderlyingTrade execute_underlying_trade;
+	B3DaysToSettlement days_to_settlement;
+}__attribute__((packed)) B3MessagePQuote;
+
+/* Same. */
+typedef struct {
+	B3BidirectionalBusinessHeader business_header;
+	B3SecurityID security_id;
+	B3QuoteID quote_id;
+	B3Account account;
+	B3SenderLocation sender_location;
+	B3Trader entering_trader;
+	B3Trader executing_trader;
+}__attribute__((packed)) B3MessagePQuoteCancel;
+
+/* Does not contain quote req id, desk id, memo nor text. */
+typedef struct {
+	B3BidirectionalBusinessHeader business_header;
+	B3RejReason reject_reason;
+	B3SecurityID security_id;
+	B3QuoteID quote_id;
+	B3TradeID trade_id;
+	B3Firm contra_broker;
+	B3UTCTimestampNanos transact_time;
+	B3Trader entering_trader;
+	B3SettlType settl_type;
+	B3Price price;
+	B3Quantity order_quantity;
+	B3SenderLocation sender_location;
+	B3Trader executing_trader;
+	B3Percentage fixed_rate;
+	B3DaysToSettlement days_to_settlement;
+	B3GroupSizeEncoding no_sides;
+	B3Side side;
+	B3Account account;
+}__attribute__((packed)) B3MessagePQuoteRequestReject;
+
+/* Ya know. */
+typedef struct {
+	B3InboundBusinessHeader business_header;
+	B3PosReqID pos_req_id;
+	B3SecurityID security_id;
+	B3PriceOffset threshold_amount;
+	B3Account account;
+	B3SenderLocation sender_location;
+	B3PosTransType pos_trans_type;
+	B3LocalMktDate clearing_business_date;
+	uint8_t is_contrary_instruction;
+	B3Trader entering_trader;
+	B3Quantity long_quantity;
+}__attribute__((packed)) B3MessagePPositionMaintenanceRequest;
+
+typedef struct {
+	B3InboundBusinessHeader business_header;
+	B3PosReqID pos_req_id;
+	B3SecurityID security_id;
+	B3PosReqID orig_pos_req_ref_id;
+	B3PosMaintRptID pos_main_rpt_ref_id;
+	B3SenderLocation sender_location;
+	B3Trader entering_trader;
+}__attribute__((packed)) B3MessagePPositionMaintenanceCancelRequest;
+
+/* ... */
+typedef struct {
+	B3OutboundBusinessHeader business_header;
+	B3PosReqID pos_req_id;
+	B3SecurityID security_id;
+	B3PosMaintRptID pos_maint_rpt_id;
+	B3PosTransType pos_trans_type;
+	B3PosMaintAction pos_maint_action;
+	B3PosMaintStatus pos_maint_status;
+	B3TradeID trade_id;
+	B3PosReqID orig_pos_req_ref_id;
+	B3AccountType account_type;
+	B3LocalMktDate clearing_business_date;
+	B3PriceOffset threshold_amount;
+	B3UTCTimestampNanos transact_time;
+	B3Account account;
+	B3SenderLocation sender_location;
+	B3RejReason pos_maint_result;
+	uint8_t is_contrary_instruction;
+	B3GroupSizeEncoding no_positions;
+	B3PosType pos_type;
+	B3Quantity long_quantity;
+	B3Quantity short_quantity;
+}__attribute__((packed)) B3MessagePPositionMaintenanceReport;
+
+/* ... */
+typedef struct {
+	B3InboundBusinessHeader business_header;
+	B3AllocID alloc_id;
+	B3SecurityID security_id;
+	B3AllocTransType alloc_trans_type;
+	B3AllocType alloc_type;
+	B3AllocNoOrdersType alloc_no_orders_type;
+	B3Quantity quantity;
+	B3SenderLocation sender_location;
+	B3Trader entering_trader;
+	B3TradeID trade_id;
+	B3LocalMktDate trade_date;
+	B3AllocID individual_alloc_id;
+	B3Account alloc_account;
+	B3Quantity alloc_quantity;
+}__attribute__((packed)) B3MessagePAllocationInstruction;
+
+typedef struct {
+	B3OutboundBusinessHeader business_header;
+	B3AllocID alloc_id;
+	B3SecurityID security_id;
+	B3AllocReportID alloc_report_id;
+	B3AllocTransType alloc_trans_type;
+	B3AllocReportType alloc_report_type;
+	B3AllocNoOrdersType alloc_no_orders_type;
+	B3RejReason alloc_rej_code;
+	B3Quantity quantity;
+	B3AllocStatus alloc_status;
+	B3LocalMktDate trade_date;
+	B3UTCTimestampNanos transact_time;
+	B3Side side;
+	B3SenderLocation sender_location;
+	B3Trader entering_trader;
+}__attribute__((packed)) B3MessagePAllocationReport;
+
 #endif /* B3_HEADER_INCLUDED */
 
 #pragma scalar_storage_order default
